@@ -4,6 +4,7 @@ import styles from './App.module.css';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 import TodoContainer from './components/TodoContainer';
+import ScheduleContainer from './components/ScheduleContainer';
 
 interface AppProps {}
 
@@ -58,19 +59,43 @@ function App({}: AppProps) {
       return;
     }
 
-    const droppable = droppables[source.droppableId];
-    const newTodoIds = [...droppable.todoIds];
-    newTodoIds.splice(source.index, 1);
-    newTodoIds.splice(destination.index, 0, draggableId);
+    const start = droppables[source.droppableId];
+    const finish = droppables[destination.droppableId];
 
-    const newDroppable = {
-      ...droppable,
-      todoIds: newTodoIds,
+    if (start === finish) {
+      const newTodoIds = [...start.todoIds];
+      newTodoIds.splice(source.index, 1);
+      newTodoIds.splice(destination.index, 0, draggableId);
+
+      const newDroppable = {
+        ...start,
+        todoIds: newTodoIds,
+      };
+
+      setDroppables({ ...droppables, [newDroppable.id]: newDroppable });
+      return;
+    }
+
+    // Moving from one list to another
+    const startTodoIds = [...start.todoIds];
+    startTodoIds.splice(source.index, 1);
+    const newStart = {
+      ...start,
+      todoIds: startTodoIds,
     };
 
-    console.log(newDroppable);
+    const finishTodoIds = [...finish.todoIds];
+    finishTodoIds.splice(destination.index, 0, draggableId);
+    const newFinish = {
+      ...finish,
+      todoIds: finishTodoIds,
+    };
 
-    setDroppables({ ...droppables, [newDroppable.id]: newDroppable });
+    setDroppables({
+      ...droppables,
+      [newStart.id]: newStart,
+      [newFinish.id]: newFinish,
+    });
   };
 
   const getTodos = (droppableId: string) => {
@@ -84,7 +109,7 @@ function App({}: AppProps) {
       <div className={styles.container}>
         <div className={styles.row}>
           <div className={styles.col}>
-            <TodoContainer
+            <ScheduleContainer
               id={'schedule-container'}
               todos={getTodos('schedule-container')}
             />

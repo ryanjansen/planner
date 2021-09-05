@@ -1,7 +1,6 @@
 import React from 'react';
+import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
-import styles from "./TodoItem.module.css";
-
 interface TodoItemProps {
   todo: {
     id: string;
@@ -9,19 +8,31 @@ interface TodoItemProps {
   };
   index: number;
 }
+interface IContainer {
+  isDragging: boolean
+}
+
+const Container = styled.div<IContainer>`
+  border: 1px solid #000;
+  border-radius: 3px;
+  background-color: #fff;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
+`;
 
 function TodoItem({ todo, index }: TodoItemProps) {
   return (
     <Draggable draggableId={todo.id} index={index}>
-      {(provided) => (
-        <div
+      {(provided, snapshot) => (
+        <Container
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           ref={provided.innerRef}
-          className={styles.todo}
+          isDragging={snapshot.isDragging} 
         >
           {todo.content}
-        </div>
+        </Container>
       )}
     </Draggable>
   );

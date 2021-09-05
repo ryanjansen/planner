@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
+import styled from 'styled-components';
 import { Droppable } from 'react-beautiful-dnd';
 import TodoItem from './TodoItem';
-import styled from 'styled-components';
+import Timeline from "./Timeline";
 
-interface TodoContainerProps {
+interface Props {
   id: string;
   todos: [
     {
@@ -15,9 +16,10 @@ interface TodoContainerProps {
 
 const Container = styled.div`
   background-color: #fff;
-  min-width: 300px;
   color: #000;
+  min-width: 300px;
   min-height: 500px;
+  position: relative;
 `;
 
 const Title = styled.h1`
@@ -29,16 +31,14 @@ const TaskList = styled.div`
   padding: 10px;
 `;
 
-function TodoContainer({ id, todos }: TodoContainerProps) {
+function ScheduleContainer({ id, todos }: Props): ReactElement {
   return (
     <Container>
-      <Title>Todos</Title>
+      <Title>Schedule</Title>
+      <Timeline />
       <Droppable droppableId={id}>
         {(provided) => (
-          <TaskList
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-          >
+          <TaskList ref={provided.innerRef} {...provided.droppableProps}>
             {todos.map((todo, index) => (
               <TodoItem key={todo.id} todo={todo} index={index} />
             ))}
@@ -50,4 +50,4 @@ function TodoContainer({ id, todos }: TodoContainerProps) {
   );
 }
 
-export default TodoContainer;
+export default ScheduleContainer;
